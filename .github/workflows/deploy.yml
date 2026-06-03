@@ -1,44 +1,61 @@
-name: Deploy Website to GitHub Pages
+name: CI/CD Pipeline
 
 on:
-  # Triggers the workflow on push events targeting the main branch
   push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps: deployment.outputs.page_url }}
+  build-and-test:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload Artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/checkout@v3
+        
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          # If your website files are in a subdirectory (like 'dist' or 'public'), change "." to "./dist"
-          path: "."
+          python-version: '3.10'
+          cache: 'pip'
+          
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install flake8
+          
+      - name: Lint with Flake8
+        run: |
+          # Stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # Exit-zero treats all errors as warnings
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4 
+  # deploy:
+  #   needs: build-and-test
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/main'
+  #   
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v3
+  #
+  #     # ------------------------------------------------------------------
+  #     # Example: Deploy to Render via Deploy Hook (Recommended & Free)
+  #     # ------------------------------------------------------------------
+  #     # - name: Trigger Render Deployment
+  #     #   run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+  #
+  #     # ------------------------------------------------------------------
+  #     # Example: Deploy to Heroku
+  #     # ------------------------------------------------------------------
+  #     # - name: Deploy to Heroku
+  #     #   uses: akhileshns/heroku-deploy@v3.12.12
+  #     #   with:
+  #     #     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+  #     #     heroku_app_name: "YOUR_HEROKU_APP_NAME"
+  #     #     heroku_email: "YOUR_HEROKU_EMAIL"
