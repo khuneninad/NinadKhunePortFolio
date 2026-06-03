@@ -180,6 +180,41 @@ h2.section-title {
     position: relative;
 }
 
+.hero-inner {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.hero-text {
+    flex: 1;
+    min-width: 300px;
+}
+
+.hero-image {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-img {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent-teal);
+    box-shadow: 0 0 20px var(--accent-teal-glow);
+    transition: var(--transition-smooth);
+}
+
+.profile-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px var(--accent-teal);
+}
+
 .status-indicator {
     font-family: var(--font-code);
     font-size: 0.85rem;
