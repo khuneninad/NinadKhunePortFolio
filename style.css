@@ -558,13 +558,10 @@ footer {
     }
     
     .hero-inner {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column-reverse;
         text-align: center;
         gap: 2rem;
-    }
-    
-    .hero-image {
-        grid-row: 1;
     }
     
     .hero-actions {
