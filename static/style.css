@@ -534,6 +534,21 @@ footer {
         padding: 2rem;
     }
 
+    .hero-inner {
+        flex-direction: column-reverse;
+        text-align: center;
+        gap: 2rem;
+    }
+    
+    .hero-actions {
+        justify-content: center;
+    }
+    
+    .profile-img {
+        width: 180px;
+        height: 180px;
+    }
+
     .exp-header {
         flex-direction: column;
     }
